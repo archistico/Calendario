@@ -43,7 +43,7 @@ class Calendario
         }
     }
 
-    function loadDays()
+    private function loadDays()
     {
         $datesArray = array();
 
@@ -57,8 +57,22 @@ class Calendario
         }
         return $datesArray;
     }
+
+    public function getDays() 
+    {
+        return $this->days;
+    }
 }
 
 
-$cal = new Calendario(2019);
-var_dump($cal);
+class Pdf 
+{
+    private $calendario;
+
+    public function __construct(int $year) 
+    {
+        $this->calendario = new Calendario($year);
+    }
+}
+
+$pdf = new Pdf(2019);
