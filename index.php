@@ -1,4 +1,5 @@
 <?php
+require 'vendor/autoload.php';
 
 class Giorno 
 {
@@ -64,7 +65,7 @@ class Calendario
     }
 }
 
-
+/*
 class Pdf 
 {
     private $calendario;
@@ -75,4 +76,11 @@ class Pdf
     }
 }
 
-$pdf = new Pdf(2019);
+$pdf1 = new Pdf(2019);
+*/
+
+$pdf = new FPDF();
+$pdf->AddPage();
+$pdf->SetFont('Arial','B',16);
+$pdf->Cell(40,10,'Hello World!');
+$pdf->Output();

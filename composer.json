@@ -1,0 +1,12 @@
+{
+    "name": "archemi/calendario",
+    "authors": [
+        {
+            "name": "archistico",
+            "email": "info@archistico.com"
+        }
+    ],
+    "require": {
+        "setasign/fpdf": "1.8.1"
+    }
+}
