@@ -30,22 +30,22 @@ class Giorno
 
     public function getDay() 
     {
-        return $this->$giorno;
+        return $this->giorno;
     }
 
     public function getMonth() 
     {
-        return $this->$mese;
+        return $this->mese;
     }
 
     public function getYear() 
     {
-        return $this->$anno;
+        return $this->anno;
     }
 
     public function getDayOfWeek() 
     {
-        return $this->$giorno_settimana;
+        return $this->giorno_settimana;
     }
 }
 
@@ -133,9 +133,9 @@ for($c = 0; $c<12 ; $c++) {
     $yColumn = $margin + $header;
     $pdf->SetFillColor(196);
     //$pdf->Rect($xColumn,$yColumn,$columnWidth,$columnHeight,'F');
-    //$mese = $cal
+    $mese = $cal->getMonth($c+1);
 
-    for($r = 0; $r<31 ; $r++) {
+    for($r = 0; $r<count($mese) ; $r++) {
         $pdf->SetFillColor(180);
         $yRow = $yColumn + $r * $rowHeight + $rowMargin;
         //$pdf->Rect($xColumn+$rowMargin,$yRow,$columnWidth-2*$rowMargin,$rowHeight-$rowMargin,'F');
@@ -149,7 +149,7 @@ for($c = 0; $c<12 ; $c++) {
         
         // Giorno della settimana
         $pdf->SetFont('Arial','',10);
-        $pdf->Text($xColumn+$rowMargin+$rowPadding+5,$yRow+$textNumberHeight+$rowPadding,"ME");
+        $pdf->Text($xColumn+$rowMargin+$rowPadding+5,$yRow+$textNumberHeight+$rowPadding,$mese[$r]->getDayOfWeek());
     }
 }
 
