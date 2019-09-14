@@ -29,6 +29,89 @@ class Giorno
         }
     }
 
+    private function getEasterDate($year = false){
+        if($year === false) {
+            $year = date("Y");
+        }
+        $easterDays = easter_days($year);
+        $march21 = date($year . '-03-21');
+        return DateTime::createFromFormat('d-m-Y', date('d-m-Y', strtotime("$march21 + $easterDays days")));
+    }
+
+    public function isHoliday()
+    {
+        if( $this->giorno_settimana == "Do" || $this->giorno_settimana == "Sa" ) 
+        {
+            return true;
+        }
+
+        $pasqua = $this->getEasterDate($this->anno);
+        
+        if( $this->giorno == $pasqua->format('d') && $this->mese == $pasqua->format('m') )
+        {
+            return true;
+        }
+
+        $pasquetta = $pasqua->add(new DateInterval('P1D'));
+        
+        if( $this->giorno == $pasquetta->format('d') && $this->mese == $pasquetta->format('m') )
+        {
+            return true;
+        }
+
+        if( $this->giorno == "01" && $this->mese == "01" )
+        {
+            return true;
+        }
+
+        if( $this->giorno == "06" && $this->mese == "01" )
+        {
+            return true;
+        }
+
+        if( $this->giorno == "25" && $this->mese == "04" )
+        {
+            return true;
+        }
+
+        if( $this->giorno == "01" && $this->mese == "05" )
+        {
+            return true;
+        }
+
+        if( $this->giorno == "02" && $this->mese == "06" )
+        {
+            return true;
+        }
+
+        if( $this->giorno == "15" && $this->mese == "08" )
+        {
+            return true;
+        }
+
+        if( $this->giorno == "01" && $this->mese == "11" )
+        {
+            return true;
+        }
+
+        if( $this->giorno == "08" && $this->mese == "12" )
+        {
+            return true;
+        }
+
+        if( $this->giorno == "25" && $this->mese == "12" )
+        {
+            return true;
+        }
+
+        if( $this->giorno == "26" && $this->mese == "12" )
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public function getDay() 
     {
         return $this->giorno;
@@ -126,14 +209,14 @@ class Calendario
 
 $pdf = new FPDF();
 
-$year = 2019;
+$year = 2020;
 $cal = new Calendario($year);
 
 $pageWidth = 297;
 $pageHeight = 210;
 $margin = 5;
 $gutter = 2;
-$header = 20;
+$header = 10;
 
 $width = $pageWidth - 2*$margin;
 $height = $pageHeight - 2*$margin;
@@ -141,7 +224,7 @@ $columnWidth = ($width - 11*$gutter) / 12;
 $columnHeight = $height - $header;
 $rowMargin = 1;
 $rowHeight = ($columnHeight - 1*$rowMargin) / 31;
-$rowPadding = 1.5;
+$rowPadding = 0.5;
 $rowWidthNumber = 5;
 $textNumberHeight = 3;
 
@@ -164,17 +247,22 @@ for($c = 0; $c<12 ; $c++) {
     for($r = 0; $r<count($mese) ; $r++) {
         $pdf->SetFillColor(180);
         $yRow = $yColumn + $r * $rowHeight + $rowMargin;
-        //$pdf->Rect($xColumn+$rowMargin,$yRow,$columnWidth-2*$rowMargin,$rowHeight-$rowMargin,'F');
+        
+        if($mese[$r]->isHoliday())
+        {
+            $pdf->SetFillColor(230);
+            $pdf->Rect($xColumn,$yRow+$rowPadding,$columnWidth,$rowHeight-2*$rowPadding,'F');
+        }
+        
         //$pdf->SetXY($xColumn+$rowMargin,$yRow);
         $pdf->Line($xColumn, $yRow+$rowHeight, $xColumn+$columnWidth, $yRow+$rowHeight);
-        
         
         // Numero del mese
         $pdf->SetFont('Arial','B',10);
         $pdf->Text($xColumn,$yRow+$textNumberHeight+$rowPadding,$mese[$r]->getDay());
         
         // Giorno della settimana
-        $pdf->SetFont('Arial','',8);
+        $pdf->SetFont('Arial','',9);
         $pdf->Text($xColumn+$rowWidthNumber,$yRow+$textNumberHeight+$rowPadding,$mese[$r]->getDayOfWeek());
     }
 }
