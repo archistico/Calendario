@@ -27,6 +27,26 @@ class Giorno
             case 6: $this->giorno_settimana = "Sa"; break;
         }
     }
+
+    public function getDay() 
+    {
+        return $this->$giorno;
+    }
+
+    public function getMonth() 
+    {
+        return $this->$mese;
+    }
+
+    public function getYear() 
+    {
+        return $this->$anno;
+    }
+
+    public function getDayOfWeek() 
+    {
+        return $this->$giorno_settimana;
+    }
 }
 
 class Calendario 
@@ -63,52 +83,30 @@ class Calendario
     {
         return $this->days;
     }
-}
 
-/*
-class Pdf 
-{
-    private $calendario;
-
-    public function __construct(int $year) 
+    public function getMonth(int $m)
     {
-        $this->calendario = new Calendario($year);
+        $days = array();
+        foreach($this->days as $d) 
+        {
+            if (((int)$d->getMonth())<10)
+            {
+                $mese = "0".$d->getMonth();
+            } else {
+                $mese = $d->getMonth();
+            }
+            if($mese == $m)
+            {
+                $days[] = $d;
+            }
+        }
+        return $days;
     }
 }
 
-$pdf1 = new Pdf(2019);
-
-
 $pdf = new FPDF();
-$pdf->AddPage();
-$pdf->SetFont('Arial','B',16);
-$pdf->Cell(40,10,'Hello World!');
-$filename="./test.pdf";
-$pdf->Output($filename,'F');
-*/
 
-function ImprovedTable($header, $data)
-{
-    // Column widths
-    $w = array(40, 35, 40, 45);
-    // Header
-    for($i=0;$i<count($header);$i++)
-        $this->Cell($w[$i],7,$header[$i],1,0,'C');
-    $this->Ln();
-    // Data
-    foreach($data as $row)
-    {
-        $this->Cell($w[0],6,$row[0],'LR');
-        $this->Cell($w[1],6,$row[1],'LR');
-        $this->Cell($w[2],6,number_format($row[2]),'LR',0,'R');
-        $this->Cell($w[3],6,number_format($row[3]),'LR',0,'R');
-        $this->Ln();
-    }
-    // Closing line
-    $this->Cell(array_sum($w),0,'','T');
-}
-
-$pdf = new FPDF();
+$cal = new Calendario(2020);
 
 $pageWidth = 297;
 $pageHeight = 210;
@@ -120,8 +118,10 @@ $width = $pageWidth - 2*$margin;
 $height = $pageHeight - 2*$margin;
 $columnWidth = ($width - 11*$gutter) / 12;
 $columnHeight = $height - $header;
-$rowHeight = $columnHeight / 31;
 $rowMargin = 1;
+$rowHeight = ($columnHeight - 1*$rowMargin) / 31;
+$rowPadding = 1.5;
+$textNumberHeight = 3;
 
 $pdf->AddPage('L', [$pageWidth,$pageHeight]);
 $pdf->SetMargins($margin, $margin, $margin);
@@ -131,24 +131,29 @@ $pdf->SetFont('Arial','B',10);
 for($c = 0; $c<12 ; $c++) {
     $xColumn = $margin + $c*($columnWidth+$gutter);
     $yColumn = $margin + $header;
-    $pdf->SetFillColor(128);
-    $pdf->Rect($xColumn,$yColumn,$columnWidth,$columnHeight,'F');
+    $pdf->SetFillColor(196);
+    //$pdf->Rect($xColumn,$yColumn,$columnWidth,$columnHeight,'F');
+    //$mese = $cal
 
     for($r = 0; $r<31 ; $r++) {
-        $pdf->SetFillColor(64);
+        $pdf->SetFillColor(180);
         $yRow = $yColumn + $r * $rowHeight + $rowMargin;
-        $pdf->Rect($xColumn+$rowMargin,$yRow,$columnWidth-2*$rowMargin,$rowHeight-$rowMargin,'F');
+        //$pdf->Rect($xColumn+$rowMargin,$yRow,$columnWidth-2*$rowMargin,$rowHeight-$rowMargin,'F');
+        //$pdf->SetXY($xColumn+$rowMargin,$yRow);
+        $pdf->Line($xColumn, $yRow+$rowHeight, $xColumn+$columnWidth, $yRow+$rowHeight);
+        
+        
+        // Numero del mese
+        $pdf->SetFont('Arial','B',10);
+        $pdf->Text($xColumn+$rowMargin+$rowPadding,$yRow+$textNumberHeight+$rowPadding,$r+1);
+        
+        // Giorno della settimana
+        $pdf->SetFont('Arial','',10);
+        $pdf->Text($xColumn+$rowMargin+$rowPadding+5,$yRow+$textNumberHeight+$rowPadding,"ME");
     }
 }
 
 /*
-$y = $pdf->getY();
-$pdf->Cell(15,10,'01','LTR',0,'C');
-$pdf->Cell(25,20,'','LTRB',1,'C');
-$pdf->SetFont('Arial','',14);
-$pdf->setY(20);
-$pdf->Cell(15,10,'Lu','LRB',1,'C');
-
 //$filename="./test.pdf";
 //$pdf->Output($filename,'F');
 */
