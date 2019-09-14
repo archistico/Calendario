@@ -9,6 +9,7 @@ class Giorno
     
     private $giorno_settimana;
     private $giorno_settimana_numerico;
+    private $mese_nome;
 
     public function __construct(DateTime $data)
     {
@@ -36,6 +37,25 @@ class Giorno
     public function getMonth() 
     {
         return $this->mese;
+    }
+
+    public static function getMonthName(int $month)
+    {
+        switch($month)
+        {
+            case 1: return 'Gennaio';
+            case 2: return 'Febbraio';
+            case 3: return 'Marzo';
+            case 4: return 'Aprile';
+            case 5: return 'Maggio';
+            case 6: return 'Giugno';
+            case 7: return 'Luglio';
+            case 8: return 'Agosto';
+            case 9: return 'Settembre';
+            case 10: return 'Ottobre';
+            case 11: return 'Novembre';
+            case 12: return 'Dicembre';
+        }
     }
 
     public function getYear() 
@@ -106,7 +126,8 @@ class Calendario
 
 $pdf = new FPDF();
 
-$cal = new Calendario(2020);
+$year = 2019;
+$cal = new Calendario($year);
 
 $pageWidth = 297;
 $pageHeight = 210;
@@ -121,12 +142,14 @@ $columnHeight = $height - $header;
 $rowMargin = 1;
 $rowHeight = ($columnHeight - 1*$rowMargin) / 31;
 $rowPadding = 1.5;
+$rowWidthNumber = 5;
 $textNumberHeight = 3;
 
 $pdf->AddPage('L', [$pageWidth,$pageHeight]);
 $pdf->SetMargins($margin, $margin, $margin);
 
-$pdf->SetFont('Arial','B',10);
+$pdf->SetFont('Arial','B',20);
+$pdf->Text($margin + $width/2 -10, $margin + $header/2,$year);
 
 for($c = 0; $c<12 ; $c++) {
     $xColumn = $margin + $c*($columnWidth+$gutter);
@@ -134,6 +157,9 @@ for($c = 0; $c<12 ; $c++) {
     $pdf->SetFillColor(196);
     //$pdf->Rect($xColumn,$yColumn,$columnWidth,$columnHeight,'F');
     $mese = $cal->getMonth($c+1);
+    $meseNome = Giorno::getMonthName($c+1);
+    $pdf->SetFont('Arial','B',11);
+    $pdf->Text($xColumn,$yColumn,($meseNome));
 
     for($r = 0; $r<count($mese) ; $r++) {
         $pdf->SetFillColor(180);
@@ -145,11 +171,11 @@ for($c = 0; $c<12 ; $c++) {
         
         // Numero del mese
         $pdf->SetFont('Arial','B',10);
-        $pdf->Text($xColumn+$rowMargin+$rowPadding,$yRow+$textNumberHeight+$rowPadding,$r+1);
+        $pdf->Text($xColumn,$yRow+$textNumberHeight+$rowPadding,$mese[$r]->getDay());
         
         // Giorno della settimana
-        $pdf->SetFont('Arial','',10);
-        $pdf->Text($xColumn+$rowMargin+$rowPadding+5,$yRow+$textNumberHeight+$rowPadding,$mese[$r]->getDayOfWeek());
+        $pdf->SetFont('Arial','',8);
+        $pdf->Text($xColumn+$rowWidthNumber,$yRow+$textNumberHeight+$rowPadding,$mese[$r]->getDayOfWeek());
     }
 }
 
