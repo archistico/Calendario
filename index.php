@@ -110,8 +110,38 @@ function ImprovedTable($header, $data)
 
 $pdf = new FPDF();
 
-$pdf->AddPage('L');
-$pdf->SetFont('Arial','B',18);
+$pageWidth = 297;
+$pageHeight = 210;
+$margin = 5;
+$gutter = 2;
+$header = 20;
+
+$width = $pageWidth - 2*$margin;
+$height = $pageHeight - 2*$margin;
+$columnWidth = ($width - 11*$gutter) / 12;
+$columnHeight = $height - $header;
+$rowHeight = $columnHeight / 31;
+$rowMargin = 1;
+
+$pdf->AddPage('L', [$pageWidth,$pageHeight]);
+$pdf->SetMargins($margin, $margin, $margin);
+
+$pdf->SetFont('Arial','B',10);
+
+for($c = 0; $c<12 ; $c++) {
+    $xColumn = $margin + $c*($columnWidth+$gutter);
+    $yColumn = $margin + $header;
+    $pdf->SetFillColor(128);
+    $pdf->Rect($xColumn,$yColumn,$columnWidth,$columnHeight,'F');
+
+    for($r = 0; $r<31 ; $r++) {
+        $pdf->SetFillColor(64);
+        $yRow = $yColumn + $r * $rowHeight + $rowMargin;
+        $pdf->Rect($xColumn+$rowMargin,$yRow,$columnWidth-2*$rowMargin,$rowHeight-$rowMargin,'F');
+    }
+}
+
+/*
 $y = $pdf->getY();
 $pdf->Cell(15,10,'01','LTR',0,'C');
 $pdf->Cell(25,20,'','LTRB',1,'C');
@@ -121,5 +151,6 @@ $pdf->Cell(15,10,'Lu','LRB',1,'C');
 
 //$filename="./test.pdf";
 //$pdf->Output($filename,'F');
+*/
 
 $pdf->Output();
