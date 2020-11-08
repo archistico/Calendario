@@ -7,6 +7,7 @@
         }
     ],
     "require": {
-        "setasign/fpdf": "1.8.1"
+        "setasign/fpdf": "1.8.1",
+        "bcosca/fatfree-core": "^3.7"
     }
 }
