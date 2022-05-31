@@ -40,7 +40,7 @@ class Giorno
 
     public function isHoliday()
     {
-        if( $this->giorno_settimana == "Do" || $this->giorno_settimana == "Sa" ) 
+        if( $this->giorno_settimana == "Do" ) 
         {
             return true;
         }
