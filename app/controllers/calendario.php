@@ -9,7 +9,7 @@ class Calendario
         $anno_in_corso = date("Y");
         if(is_numeric($anno_in_corso)) {
             $anno_in_corso = intval($anno_in_corso);
-            for($c = 0; $c<3 ; $c++) {
+            for($c = -1; $c<6 ; $c++) {
                 $anni[] = $anno_in_corso + $c;
             }
         }
